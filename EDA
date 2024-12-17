@@ -1,0 +1,417 @@
+Prelimenary Examination/ Data Pre-processing
+
+Code cell <LI1_LUM67s6q>
+# %% [code]
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import requests
+
+Code cell <ctmI5Ec98Raz>
+# %% [code]
+env= '/bottle.csv'
+df = pd.read_csv(env, on_bad_lines='skip')
+
+df.head()
+
+Execution output from Dec 16, 2024 1:57 PM
+13KB
+	Stream
+		<ipython-input-3-7ddf974d7868>:2: DtypeWarning: Columns (47,73) have mixed types. Specify dtype option on import or set low_memory=False.
+		  df = pd.read_csv(env, on_bad_lines='skip')
+	text/plain
+		Cst_Cnt  Btl_Cnt       Sta_ID                                Depth_ID  \
+		0        1        1  054.0 056.0  19-4903CR-HY-060-0930-05400560-0000A-3   
+		1        1        2  054.0 056.0  19-4903CR-HY-060-0930-05400560-0008A-3   
+		2        1        3  054.0 056.0  19-4903CR-HY-060-0930-05400560-0010A-7   
+		3        1        4  054.0 056.0  19-4903CR-HY-060-0930-05400560-0019A-3   
+		4        1        5  054.0 056.0  19-4903CR-HY-060-0930-05400560-0020A-7   
+		
+		   Depthm  T_degC  Salnty  O2ml_L  STheta  O2Sat  ...  R_PHAEO  R_PRES  \
+		0       0   10.50  33.440     NaN  25.649    NaN  ...      NaN       0   
+		1       8   10.46  33.440     NaN  25.656    NaN  ...      NaN       8   
+		2      10   10.46  33.437     NaN  25.654    NaN  ...      NaN      10   
+		3      19   10.45  33.420     NaN  25.643    NaN  ...      NaN      19   
+		4      20   10.45  33.421     NaN  25.643    NaN  ...      NaN      20   
+		
+		   R_SAMP  DIC1  DIC2  TA1  TA2  pH2  pH1  DIC Quality Comment  
+		0     NaN   NaN   NaN  NaN  NaN  NaN  NaN                  NaN  
+		1     NaN   NaN   NaN  NaN  NaN  NaN  NaN                  NaN  
+		2     NaN   NaN   NaN  NaN  NaN  NaN  NaN                  NaN  
+		3     NaN   NaN   NaN  NaN  NaN  NaN  NaN                  NaN  
+		4     NaN   NaN   NaN  NaN  NaN  NaN  NaN                  NaN  
+		
+		[5 rows x 74 columns]
+
+Code cell <3P2JZvfM8Ynh>
+# %% [code]
+df.info()
+Execution output from Dec 16, 2024 1:57 PM
+4KB
+	Stream
+		<class 'pandas.core.frame.DataFrame'>
+		RangeIndex: 864863 entries, 0 to 864862
+		Data columns (total 74 columns):
+		 #   Column               Non-Null Count   Dtype  
+		---  ------               --------------   -----  
+		 0   Cst_Cnt              864863 non-null  int64  
+		 1   Btl_Cnt              864863 non-null  int64  
+		 2   Sta_ID               864863 non-null  object 
+		 3   Depth_ID             864863 non-null  object 
+		 4   Depthm               864863 non-null  int64  
+		 5   T_degC               853900 non-null  float64
+		 6   Salnty               817509 non-null  float64
+		 7   O2ml_L               696201 non-null  float64
+		 8   STheta               812174 non-null  float64
+		 9   O2Sat                661274 non-null  float64
+		 10  Oxy_µmol/Kg          661268 non-null  float64
+		 11  BtlNum               118667 non-null  float64
+		 12  RecInd               864863 non-null  int64  
+		 13  T_prec               853900 non-null  float64
+		 14  T_qual               23127 non-null   float64
+		 15  S_prec               817509 non-null  float64
+		 16  S_qual               74914 non-null   float64
+		 17  P_qual               673755 non-null  float64
+		 18  O_qual               184676 non-null  float64
+		 19  SThtaq               65823 non-null   float64
+		 20  O2Satq               217797 non-null  float64
+		 21  ChlorA               225272 non-null  float64
+		 22  Chlqua               639166 non-null  float64
+		 23  Phaeop               225271 non-null  float64
+		 24  Phaqua               639170 non-null  float64
+		 25  PO4uM                413317 non-null  float64
+		 26  PO4q                 451786 non-null  float64
+		 27  SiO3uM               354091 non-null  float64
+		 28  SiO3qu               510866 non-null  float64
+		 29  NO2uM                337576 non-null  float64
+		 30  NO2q                 529474 non-null  float64
+		 31  NO3uM                337403 non-null  float64
+		 32  NO3q                 529933 non-null  float64
+		 33  NH3uM                64962 non-null   float64
+		 34  NH3q                 808299 non-null  float64
+		 35  C14As1               14432 non-null   float64
+		 36  C14A1p               12760 non-null   float64
+		 37  C14A1q               848605 non-null  float64
+		 38  C14As2               14414 non-null   float64
+		 39  C14A2p               12742 non-null   float64
+		 40  C14A2q               848623 non-null  float64
+		 41  DarkAs               22649 non-null   float64
+		 42  DarkAp               20457 non-null   float64
+		 43  DarkAq               840440 non-null  float64
+		 44  MeanAs               22650 non-null   float64
+		 45  MeanAp               20457 non-null   float64
+		 46  MeanAq               840439 non-null  float64
+		 47  IncTim               14437 non-null   object 
+		 48  LightP               18651 non-null   float64
+		 49  R_Depth              864863 non-null  float64
+		 50  R_TEMP               853900 non-null  float64
+		 51  R_POTEMP             818816 non-null  float64
+		 52  R_SALINITY           817509 non-null  float64
+		 53  R_SIGMA              812007 non-null  float64
+		 54  R_SVA                812092 non-null  float64
+		 55  R_DYNHT              818206 non-null  float64
+		 56  R_O2                 696201 non-null  float64
+		 57  R_O2Sat              666448 non-null  float64
+		 58  R_SIO3               354099 non-null  float64
+		 59  R_PO4                413325 non-null  float64
+		 60  R_NO3                337411 non-null  float64
+		 61  R_NO2                337584 non-null  float64
+		 62  R_NH4                64982 non-null   float64
+		 63  R_CHLA               225276 non-null  float64
+		 64  R_PHAEO              225275 non-null  float64
+		 65  R_PRES               864863 non-null  int64  
+		 66  R_SAMP               122006 non-null  float64
+		 67  DIC1                 1999 non-null    float64
+		 68  DIC2                 224 non-null     float64
+		 69  TA1                  2084 non-null    float64
+		 70  TA2                  234 non-null     float64
+		 71  pH2                  10 non-null      float64
+		 72  pH1                  84 non-null      float64
+		 73  DIC Quality Comment  55 non-null      object 
+		dtypes: float64(65), int64(5), object(4)
+		memory usage: 488.3+ MB
+
+Code cell <ZiEiMWLA-L-d>
+# %% [code]
+numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+df = df.loc[:, numeric_cols]
+
+Code cell <vBiPz1_y-R2R>
+# %% [code]
+df.info()
+Execution output from Dec 16, 2024 1:57 PM
+4KB
+	Stream
+		<class 'pandas.core.frame.DataFrame'>
+		RangeIndex: 864863 entries, 0 to 864862
+		Data columns (total 70 columns):
+		 #   Column       Non-Null Count   Dtype  
+		---  ------       --------------   -----  
+		 0   Cst_Cnt      864863 non-null  int64  
+		 1   Btl_Cnt      864863 non-null  int64  
+		 2   Depthm       864863 non-null  int64  
+		 3   T_degC       853900 non-null  float64
+		 4   Salnty       817509 non-null  float64
+		 5   O2ml_L       696201 non-null  float64
+		 6   STheta       812174 non-null  float64
+		 7   O2Sat        661274 non-null  float64
+		 8   Oxy_µmol/Kg  661268 non-null  float64
+		 9   BtlNum       118667 non-null  float64
+		 10  RecInd       864863 non-null  int64  
+		 11  T_prec       853900 non-null  float64
+		 12  T_qual       23127 non-null   float64
+		 13  S_prec       817509 non-null  float64
+		 14  S_qual       74914 non-null   float64
+		 15  P_qual       673755 non-null  float64
+		 16  O_qual       184676 non-null  float64
+		 17  SThtaq       65823 non-null   float64
+		 18  O2Satq       217797 non-null  float64
+		 19  ChlorA       225272 non-null  float64
+		 20  Chlqua       639166 non-null  float64
+		 21  Phaeop       225271 non-null  float64
+		 22  Phaqua       639170 non-null  float64
+		 23  PO4uM        413317 non-null  float64
+		 24  PO4q         451786 non-null  float64
+		 25  SiO3uM       354091 non-null  float64
+		 26  SiO3qu       510866 non-null  float64
+		 27  NO2uM        337576 non-null  float64
+		 28  NO2q         529474 non-null  float64
+		 29  NO3uM        337403 non-null  float64
+		 30  NO3q         529933 non-null  float64
+		 31  NH3uM        64962 non-null   float64
+		 32  NH3q         808299 non-null  float64
+		 33  C14As1       14432 non-null   float64
+		 34  C14A1p       12760 non-null   float64
+		 35  C14A1q       848605 non-null  float64
+		 36  C14As2       14414 non-null   float64
+		 37  C14A2p       12742 non-null   float64
+		 38  C14A2q       848623 non-null  float64
+		 39  DarkAs       22649 non-null   float64
+		 40  DarkAp       20457 non-null   float64
+		 41  DarkAq       840440 non-null  float64
+		 42  MeanAs       22650 non-null   float64
+		 43  MeanAp       20457 non-null   float64
+		 44  MeanAq       840439 non-null  float64
+		 45  LightP       18651 non-null   float64
+		 46  R_Depth      864863 non-null  float64
+		 47  R_TEMP       853900 non-null  float64
+		 48  R_POTEMP     818816 non-null  float64
+		 49  R_SALINITY   817509 non-null  float64
+		 50  R_SIGMA      812007 non-null  float64
+		 51  R_SVA        812092 non-null  float64
+		 52  R_DYNHT      818206 non-null  float64
+		 53  R_O2         696201 non-null  float64
+		 54  R_O2Sat      666448 non-null  float64
+		 55  R_SIO3       354099 non-null  float64
+		 56  R_PO4        413325 non-null  float64
+		 57  R_NO3        337411 non-null  float64
+		 58  R_NO2        337584 non-null  float64
+		 59  R_NH4        64982 non-null   float64
+		 60  R_CHLA       225276 non-null  float64
+		 61  R_PHAEO      225275 non-null  float64
+		 62  R_PRES       864863 non-null  int64  
+		 63  R_SAMP       122006 non-null  float64
+		 64  DIC1         1999 non-null    float64
+		 65  DIC2         224 non-null     float64
+		 66  TA1          2084 non-null    float64
+		 67  TA2          234 non-null     float64
+		 68  pH2          10 non-null      float64
+		 69  pH1          84 non-null      float64
+		dtypes: float64(65), int64(5)
+		memory usage: 461.9 MB
+
+Text cell <45o37mQlEawE>
+# %% [markdown]
+I notice the abundance of unnecesary columns, of which will be dropped.
+
+Text cell <i9h1KVFxDdW7>
+# %% [markdown]
+#### Exploratory Data Analysis
+
+Code cell <nwyc8Ok99OCq>
+# %% [code]
+df['T_degC'].min()
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	text/plain
+		1.44
+
+Code cell <LSEk1NJg9qtv>
+# %% [code]
+df['T_degC'].max()
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	text/plain
+		31.14
+
+Code cell <HSvIdMye9xyv>
+# %% [code]
+df['Salnty'].min()
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	text/plain
+		28.431
+
+Code cell <dlEe9k9D9sxy>
+# %% [code]
+df['Salnty'].max()
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	text/plain
+		37.034
+
+Code cell <fjMZ1QHTIG6O>
+# %% [code]
+df['Salnty'].min()
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	text/plain
+		28.431
+
+Code cell <N2_DeUSFPOzV>
+# %% [code]
+df = df.sort_values(by='Salnty', ascending=True)
+df
+Execution output from Dec 16, 2024 1:57 PM
+19KB
+	text/plain
+		Cst_Cnt  Btl_Cnt  Depthm  T_degC  Salnty  O2ml_L  STheta  O2Sat  \
+		769300    30768   769301       1   14.91  28.431     NaN  20.934    NaN   
+		769299    30768   769300       0   14.91  28.431     NaN  20.934    NaN   
+		419885    16073   419886       0   10.92  29.170     NaN  22.254    NaN   
+		459866    18237   459867       0   11.31  29.400     NaN  22.366    NaN   
+		457066    18139   457067       0   11.30  29.402    6.65  22.369  104.5   
+		...         ...      ...     ...     ...     ...     ...     ...    ...   
+		810515    32287   810516      10   14.88     NaN     NaN     NaN    NaN   
+		810524    32288   810525      10   15.10     NaN     NaN     NaN    NaN   
+		811305    32315   811306      10   15.27     NaN     NaN     NaN    NaN   
+		828253    32979   828254       0   13.58     NaN    6.15     NaN    NaN   
+		828290    32980   828291       0   13.34     NaN    6.31     NaN    NaN   
+		
+		        Oxy_µmol/Kg  BtlNum  ...  R_CHLA  R_PHAEO  R_PRES  R_SAMP  DIC1  DIC2  \
+		769300          NaN     7.0  ...    1.56     0.47       1     7.0   NaN   NaN   
+		769299          NaN     NaN  ...    1.56     0.47       0     NaN   NaN   NaN   
+		419885          NaN     NaN  ...     NaN      NaN       0     NaN   NaN   NaN   
+		459866          NaN     NaN  ...     NaN      NaN       0     NaN   NaN   NaN   
+		457066      290.491     NaN  ...     NaN      NaN       0     NaN   NaN   NaN   
+		...             ...     ...  ...     ...      ...     ...     ...   ...   ...   
+		810515          NaN     6.0  ...     NaN      NaN      10   206.0   NaN   NaN   
+		810524          NaN    20.0  ...     NaN      NaN      10   220.0   NaN   NaN   
+		811305          NaN     3.0  ...     NaN      NaN      10   203.0   NaN   NaN   
+		828253          NaN     NaN  ...    0.96     0.21       0   200.0   NaN   NaN   
+		828290          NaN     NaN  ...    0.50     0.08       0   200.0   NaN   NaN   
+		
+		        TA1  TA2  pH2  pH1  
+		769300  NaN  NaN  NaN  NaN  
+		769299  NaN  NaN  NaN  NaN  
+		419885  NaN  NaN  NaN  NaN  
+		459866  NaN  NaN  NaN  NaN  
+		457066  NaN  NaN  NaN  NaN  
+		...     ...  ...  ...  ...  
+		810515  NaN  NaN  NaN  NaN  
+		810524  NaN  NaN  NaN  NaN  
+		811305  NaN  NaN  NaN  NaN  
+		828253  NaN  NaN  NaN  NaN  
+		828290  NaN  NaN  NaN  NaN  
+		
+		[864863 rows x 70 columns]
+
+Code cell <LGg8bcoG90Ja>
+# %% [code]
+y=df['Salnty'].mean
+x=df['T_degC'].mean
+print(df['T_degC'].mean())
+print(df['T_degC'].median())
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	Stream
+		10.799676920014045
+		10.06
+
+Code cell <BkjLfYFw-85o>
+# %% [code]
+print(df['Salnty'].mean())
+print(df['Salnty'].median())
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	Stream
+		33.84035029388056
+		33.863
+
+Code cell <aVabLllZZVRW>
+# %% [code]
+columns_to_keep = [ 'T_degC', 'Salnty', 'Depthm']
+df = df[columns_to_keep]
+df.info()
+
+
+Execution output from Dec 16, 2024 1:57 PM
+0KB
+	Stream
+		<class 'pandas.core.frame.DataFrame'>
+		Index: 864863 entries, 769300 to 828290
+		Data columns (total 3 columns):
+		 #   Column  Non-Null Count   Dtype  
+		---  ------  --------------   -----  
+		 0   T_degC  853900 non-null  float64
+		 1   Salnty  817509 non-null  float64
+		 2   Depthm  864863 non-null  int64  
+		dtypes: float64(2), int64(1)
+		memory usage: 26.4 MB
+
+Text cell <wmfY-YHQFpSQ>
+# %% [markdown]
+The minimum temperature of the dataset is 1.44 degrees celsius, with a max of 31.14. This shows us the difference in temperature that can occur in the region, California. Salinity ranges from 28.431-37.034. According to ATI North America, 37 Salinity is considered very high, this could be in correlation to the high water temperature seen above, we will further investigate this idea. I also sorted and dropped columns just to have a better idea of the numbers I was working with to see what I should expect. The mean and median temperature are about the same, the same goes for Salinity. This tells us that the data for both are evenly distributed and symmetrical.
+
+Text cell <YkNegqIDElsa>
+# %% [markdown]
+## Initial Visualizations
+
+Code cell <Dq9FAWOn_GXl>
+# %% [code]
+sns.histplot(data = df, x = 'T_degC')
+plt.title('Histplot of Temperature')
+Execution output from Dec 16, 2024 1:57 PM
+25KB
+	text/plain
+		Text(0.5, 1.0, 'Histplot of Temperature')
+		<Figure size 640x480 with 1 Axes>
+
+Code cell <UUl8JHXm_QSt>
+# %% [code]
+sns.histplot(df['Salnty'])
+plt.title('Histplot of Salinity')
+Execution output from Dec 16, 2024 1:57 PM
+24KB
+	text/plain
+		Text(0.5, 1.0, 'Histplot of Salinity')
+		<Figure size 640x480 with 1 Axes>
+
+Code cell <eXt-PsRQ_Sl2>
+# %% [code]
+sns.scatterplot(data = df, x = 'Salnty', y = 'T_degC')
+plt.title('Salinity vs Temperature')
+Execution output from Dec 16, 2024 1:57 PM
+155KB
+	text/plain
+		Text(0.5, 1.0, 'Salinity vs Temperature')
+		<Figure size 640x480 with 1 Axes>
+
+Code cell <7Q7M0TrjJXWO>
+# %% [code]
+sns.scatterplot(data = df, x = 'Salnty', y = 'Depthm')
+plt.title('Salinity vs Depth')
+Execution output from Dec 16, 2024 3:56 PM
+63KB
+	text/plain
+		Text(0.5, 1.0, 'Salinity vs Depth')
+		<Figure size 640x480 with 1 Axes>
+
+Text cell <JUh7zBmb3m45>
+# %% [markdown]
+The Histplot of temperature gives us perspective on how temperature ranges. Comparing it to the Salinity histplot, we see that most of the Salinity values are between 32 and 35, giving us insight on how high the Salinity is in the region. With this information, it makes sense that there are usually higher temperatures, but there is something off. The temperature is usually below 20 degrees according to the data, this tells us that the correlation between Salinity and temperature could be different than what studies have suggested, the idea that high salinity=high temperature. With the Salinity vs Temperature scatter plot, we see that all of the temperature values result in around 32-34 salinity. We also see a slight increase in temperature as salinity increases, the cluster curves slightly. Comparing Salinity and Depth comes to mind when thinking about the ocean, it is not all at the same depth. There is some correlation between Salinity and Depth. According to the data, at peak depth salinity is around 35 and depth is lower with salinity below 33 and above about 35.8. This suggests that depth and salinity has some correlation, but we are not investigating this aspect, but this would be a good aspect to investigate to connect to global warming; however, we can’t control the oceans depth and increased temperature will cause increased sea levels, so we have to figure out the temperature aspect first to approach this new idea.
+
+
+Text cell <3Dw6tj-yNGfg>
+# %% [markdown]
